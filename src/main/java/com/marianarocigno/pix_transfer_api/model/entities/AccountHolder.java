@@ -33,6 +33,6 @@ public class AccountHolder {
 
     //uma conta para muitas chaves pix | todas as operações de salvar, etc, serão realizadas também na "classe filha" PixKeys | se uma chave for removida, tbm será removida do bd
     @OneToMany(mappedBy = "accountHolder", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List pixKeys = new ArrayList<>();
+    private List <PixKey> pixKeys = new ArrayList<>();
 
 }

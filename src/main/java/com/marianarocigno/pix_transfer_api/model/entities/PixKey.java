@@ -4,7 +4,6 @@ import com.marianarocigno.pix_transfer_api.model.enums.PixKeyType;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 @Data
 @NoArgsConstructor

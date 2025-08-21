@@ -12,11 +12,14 @@ import java.time.LocalTime;
 
 public interface TransferRepository extends JpaRepository<Transfer, Long> {
 
+
     @Query("SELECT COALESCE(SUM(t.amount), 0) " +
-            "FROM Transfer t" +
-            "WHERE t.sender.id = :senderId" +
-            "AND t.timestamp BETWEEN :startOfDay AND :endOfDay")
-    BigDecimal sumTransfersForToday(@Param("senderId") Long senderId, @Param("startOfDay") LocalDateTime startOfDay, @Param("endOfDay") LocalDateTime endOfDay);
+            "FROM Transfer t " +
+            "WHERE t.sender.id = :senderId " +
+            "AND t.createdAt BETWEEN :startOfDay AND :endOfDay")
+    BigDecimal sumTransfersForToday(@Param("senderId") Long senderId,
+                                    @Param("startOfDay") LocalDateTime startOfDay,
+                                    @Param("endOfDay") LocalDateTime endOfDay);
 
     default BigDecimal sumTransfersForToday(Long senderId) {
         LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
