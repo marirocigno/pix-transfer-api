@@ -5,16 +5,18 @@ import com.marianarocigno.pix_transfer_api.dto.AccountHolderResponseDTO;
 import com.marianarocigno.pix_transfer_api.model.entities.AccountHolder;
 import com.marianarocigno.pix_transfer_api.repository.AccountHolderRepository;
 import jakarta.validation.ValidationException;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
 public class AccountHolderService {
 
     @Autowired
     private final AccountHolderRepository repository;
+
+    public AccountHolderService(AccountHolderRepository repository) {
+        this.repository = repository;
+    }
 
     public AccountHolderResponseDTO create(AccountHolderRequestDTO dto) {
         if (repository.findByCpf(dto.getCpf()).isPresent()) {

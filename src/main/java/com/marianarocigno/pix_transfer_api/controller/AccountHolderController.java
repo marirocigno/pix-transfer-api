@@ -4,7 +4,6 @@ import com.marianarocigno.pix_transfer_api.dto.AccountHolderRequestDTO;
 import com.marianarocigno.pix_transfer_api.dto.AccountHolderResponseDTO;
 import com.marianarocigno.pix_transfer_api.repository.AccountHolderRepository;
 import com.marianarocigno.pix_transfer_api.service.AccountHolderService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,12 +11,16 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/account-holders")
-@RequiredArgsConstructor
 public class AccountHolderController {
 
     @Autowired
     private final AccountHolderService service;
     private final AccountHolderRepository repository;
+
+    public AccountHolderController(AccountHolderService service, AccountHolderRepository repository) {
+        this.service = service;
+        this.repository = repository;
+    }
 
     @PostMapping
     public AccountHolderResponseDTO create(@RequestBody AccountHolderRequestDTO dto) {

@@ -9,7 +9,6 @@ import com.marianarocigno.pix_transfer_api.repository.AccountHolderRepository;
 import com.marianarocigno.pix_transfer_api.repository.PixKeyRepository;
 import com.marianarocigno.pix_transfer_api.repository.TransferRepository;
 import jakarta.validation.ValidationException;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,19 +17,24 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Service
-@RequiredArgsConstructor
 public class TransferService {
 
     @Autowired
-    private PixKeyRepository pixKeyRepository;
+    private final PixKeyRepository pixKeyRepository;
 
     @Autowired
-    private AccountHolderRepository accountHolderRepository;
+    private final AccountHolderRepository accountHolderRepository;
 
     @Autowired
-    private TransferRepository transferRepository;
+    private final TransferRepository transferRepository;
 
     private static final BigDecimal DAILY_LIMIT = new BigDecimal("80.00");
+
+    public TransferService(PixKeyRepository pixKeyRepository, AccountHolderRepository accountHolderRepository, TransferRepository transferRepository) {
+        this.pixKeyRepository = pixKeyRepository;
+        this.accountHolderRepository = accountHolderRepository;
+        this.transferRepository = transferRepository;
+    }
 
     public TransferResponseDTO transfer(TransferRequestDTO dto) {
         PixKey senderPix = pixKeyRepository.findByKeyValue(dto.getSenderKey()).orElseThrow(() -> new ValidationException("Chave PIX do remetente não encontrada."));

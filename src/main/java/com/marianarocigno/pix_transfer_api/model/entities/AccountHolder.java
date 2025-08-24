@@ -1,15 +1,11 @@
 package com.marianarocigno.pix_transfer_api.model.entities;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
-@NoArgsConstructor
 @Entity
 public class AccountHolder {
 
@@ -31,8 +27,84 @@ public class AccountHolder {
 
     private BigDecimal balance = BigDecimal.ZERO;
 
-    //uma conta para muitas chaves pix | todas as operações de salvar, etc, serão realizadas também na "classe filha" PixKeys | se uma chave for removida, tbm será removida do bd
-    @OneToMany(mappedBy = "accountHolder", cascade = CascadeType.ALL, orphanRemoval = true)
+    //uma conta para muitas chaves pix
+    @OneToMany(mappedBy = "accountHolder")
     private List <PixKey> pixKeys = new ArrayList<>();
 
+    public AccountHolder() {
+    }
+
+    public AccountHolder(String cpf, String name, String email, String phone, BigDecimal balance) {
+        this.cpf = cpf;
+        this.name = name;
+        this.email = email;
+        this.phone = phone;
+        this.balance = balance;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public BigDecimal getBalance() {
+        return balance;
+    }
+
+    public void setBalance(BigDecimal balance) {
+        this.balance = balance;
+    }
+
+    public List<PixKey> getPixKeys() {
+        return pixKeys;
+    }
+
+    public void setPixKeys(List<PixKey> pixKeys) {
+        this.pixKeys = pixKeys;
+    }
+
+    public void addPixKey(PixKey key) {
+        pixKeys.add(key);
+        key.setAccountHolder(this);
+    }
+
+    public void removePixKey(PixKey key) {
+        pixKeys.remove(key);
+        key.setAccountHolder(null);
+    }
 }

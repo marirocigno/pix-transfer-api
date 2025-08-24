@@ -9,21 +9,24 @@ import com.marianarocigno.pix_transfer_api.repository.AccountHolderRepository;
 import com.marianarocigno.pix_transfer_api.repository.PixKeyRepository;
 import com.marianarocigno.pix_transfer_api.util.PixKeyValidator;
 import jakarta.validation.ValidationException;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 
 @Service
-@RequiredArgsConstructor
 public class PixKeyService {
 
     @Autowired
     private final PixKeyRepository pixKeyRepository;
 
     @Autowired
-    private AccountHolderRepository accountHolderRepository;
+    private final AccountHolderRepository accountHolderRepository;
+
+    public PixKeyService(PixKeyRepository pixKeyRepository, AccountHolderRepository accountHolderRepository) {
+        this.pixKeyRepository = pixKeyRepository;
+        this.accountHolderRepository = accountHolderRepository;
+    }
 
     public PixKeyResponseDTO create(PixKeyRequestDTO dto) {
         AccountHolder holder = accountHolderRepository.findById(dto.getAccountHolderId()).orElseThrow(() -> new ValidationException("Titular não encontrado."));
