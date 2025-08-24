@@ -1,6 +1,7 @@
 package com.marianarocigno.pix_transfer_api.dto;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public class AccountHolderResponseDTO {
 
@@ -14,7 +15,8 @@ public class AccountHolderResponseDTO {
     public AccountHolderResponseDTO() {
     }
 
-    public AccountHolderResponseDTO(String cpf, String name, String email, String phone, BigDecimal balance) {
+    public AccountHolderResponseDTO(Long id, String cpf, String name, String email, String phone, BigDecimal balance) {
+        this.id = id;
         this.cpf = cpf;
         this.name = name;
         this.email = email;

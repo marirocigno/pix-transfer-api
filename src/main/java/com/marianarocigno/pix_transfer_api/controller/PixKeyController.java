@@ -1,7 +1,9 @@
 package com.marianarocigno.pix_transfer_api.controller;
 
+import com.marianarocigno.pix_transfer_api.dto.AccountHolderResponseDTO;
 import com.marianarocigno.pix_transfer_api.dto.PixKeyRequestDTO;
 import com.marianarocigno.pix_transfer_api.dto.PixKeyResponseDTO;
+import com.marianarocigno.pix_transfer_api.model.entities.PixKey;
 import com.marianarocigno.pix_transfer_api.repository.PixKeyRepository;
 import com.marianarocigno.pix_transfer_api.service.PixKeyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +32,15 @@ public class PixKeyController {
     }
 
     @GetMapping
-    public List<?> listAll() {
-        return repository.findAll();
+    public List<PixKeyResponseDTO> listAllDto() {
+        return repository.findAll().stream().map(key -> new PixKeyResponseDTO(
+                key.getId(),
+                key.getKeyType(),
+                key.getKeyValue(),
+                key.getAccountHolder().getId(),
+                key.getAccountHolder().getName(),
+                key.getAccountHolder().getBalance()
+        )).toList();
     }
 }
 

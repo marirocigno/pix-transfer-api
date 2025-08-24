@@ -1,0 +1,15 @@
+2025-08-24 09:00:39.041875-03:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "ACCOUNT_HOLDER" not found (this database is empty); SQL statement:
+select ah1_0.id,ah1_0.balance,ah1_0.cpf,ah1_0.email,ah1_0.name,ah1_0.phone from account_holder ah1_0 where ah1_0.cpf=? [42104-232]
+2025-08-24 09:02:03.080915-03:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "ACCOUNT_HOLDER" not found (this database is empty); SQL statement:
+select ah1_0.id,ah1_0.balance,ah1_0.cpf,ah1_0.email,ah1_0.name,ah1_0.phone from account_holder ah1_0 where ah1_0.cpf=? [42104-232]
+2025-08-24 09:02:38.522095-03:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "ACCOUNT_HOLDER" not found (this database is empty); SQL statement:
+select ah1_0.id,ah1_0.balance,ah1_0.cpf,ah1_0.email,ah1_0.name,ah1_0.phone from account_holder ah1_0 where ah1_0.cpf=? [42104-232]
+2025-08-24 09:05:33.687850-03:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "ACCOUNT_HOLDER" not found (this database is empty); SQL statement:
+select ah1_0.id,ah1_0.balance,ah1_0.cpf,ah1_0.email,ah1_0.name,ah1_0.phone from account_holder ah1_0 where ah1_0.cpf=? [42104-232]
+2025-08-24 09:10:50.366782-03:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "ACCOUNT_HOLDER" not found (this database is empty); SQL statement:
+select ah1_0.id,ah1_0.balance,ah1_0.cpf,ah1_0.email,ah1_0.name,ah1_0.phone from account_holder ah1_0 where ah1_0.cpf=? [42104-232]

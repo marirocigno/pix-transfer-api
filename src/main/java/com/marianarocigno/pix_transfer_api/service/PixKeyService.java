@@ -2,6 +2,7 @@ package com.marianarocigno.pix_transfer_api.service;
 
 import com.marianarocigno.pix_transfer_api.dto.PixKeyRequestDTO;
 import com.marianarocigno.pix_transfer_api.dto.PixKeyResponseDTO;
+import com.marianarocigno.pix_transfer_api.exception.BusinessException;
 import com.marianarocigno.pix_transfer_api.model.entities.AccountHolder;
 import com.marianarocigno.pix_transfer_api.model.entities.PixKey;
 import com.marianarocigno.pix_transfer_api.model.enums.PixKeyType;
@@ -31,18 +32,21 @@ public class PixKeyService {
     public PixKeyResponseDTO create(PixKeyRequestDTO dto) {
         AccountHolder holder = accountHolderRepository.findById(dto.getAccountHolderId()).orElseThrow(() -> new ValidationException("Titular não encontrado."));
 
+        if (dto.getType() != PixKeyType.RANDOM && pixKeyRepository.findByKeyValue(dto.getKeyValue()).isPresent()) {
+            throw new BusinessException("Chave PIX já cadastrada.");
+        }
+
+        boolean hasSameType = pixKeyRepository.existsByAccountHolder_IdAndKeyType(holder.getId(), dto.getType());
+        if (hasSameType) {
+            throw new BusinessException("Titular já possui uma chave PIX do tipo.");
+        }
+
         String keyValue = dto.getKeyValue();
-        if (dto.getType() == PixKeyType.RANDOM) {
+        if (dto.getType() == PixKeyType.RANDOM)
             keyValue = PixKeyValidator.generateRandomKey();
-        }
 
-        if (dto.getType() != PixKeyType.RANDOM && !PixKeyValidator.isValid(keyValue, dto.getType())) {
-               throw new ValidationException("Tipo de chave PIX inválido." + dto.getType());
-        }
-
-        if (pixKeyRepository.findByKeyValue(keyValue).isPresent()) {
-            throw new ValidationException("Chave PIX já cadastrada.");
-        }
+        if (dto.getType() != PixKeyType.RANDOM)
+            PixKeyValidator.isValid(keyValue, dto.getType());
 
         PixKey pixKey = new PixKey();
         pixKey.setKeyType(dto.getType());

@@ -28,7 +28,15 @@ public class AccountHolderController {
     }
 
     @GetMapping
-    public List<?> listAll() {
-        return repository.findAll();
+    public List<AccountHolderResponseDTO> listAllDto() {
+        return repository.findAll().stream().map(holder -> new AccountHolderResponseDTO(
+                holder.getId(),
+                holder.getCpf(),
+                holder.getName(),
+                holder.getEmail(),
+                holder.getPhone(),
+                holder.getBalance()
+
+        )).toList();
     }
 }

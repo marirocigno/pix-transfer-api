@@ -15,12 +15,19 @@ public class PixKeyResponseDTO {
     public PixKeyResponseDTO() {
     }
 
-    public PixKeyResponseDTO(PixKeyType type, String keyValue, Long accountHolderId, String accountHolderName, BigDecimal accountHolderBalance) {
+    public PixKeyResponseDTO(Long id, PixKeyType type, String keyValue, Long accountHolderId, String accountHolderName, BigDecimal accountHolderBalance) {
+        this.id = id;
         this.type = type;
         this.keyValue = keyValue;
         this.accountHolderId = accountHolderId;
         this.accountHolderName = accountHolderName;
         this.accountHolderBalance = accountHolderBalance;
+    }
+
+    public PixKeyResponseDTO(Long id, String keyValue, PixKeyType type) {
+        this.id = id;
+        this.keyValue = keyValue;
+        this.type = type;
     }
 
     public Long getId() {

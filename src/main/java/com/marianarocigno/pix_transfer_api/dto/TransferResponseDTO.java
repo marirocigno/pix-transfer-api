@@ -15,7 +15,8 @@ public class TransferResponseDTO {
     public TransferResponseDTO() {
     }
 
-    public TransferResponseDTO(String senderKey, String receiverKey, BigDecimal amount, LocalDateTime createdAt, BigDecimal senderBalanceAfter, BigDecimal receiverBalanceAfter) {
+    public TransferResponseDTO(Long id, String senderKey, String receiverKey, BigDecimal amount, LocalDateTime createdAt, BigDecimal senderBalanceAfter, BigDecimal receiverBalanceAfter) {
+        this.id = id;
         this.senderKey = senderKey;
         this.receiverKey = receiverKey;
         this.amount = amount;

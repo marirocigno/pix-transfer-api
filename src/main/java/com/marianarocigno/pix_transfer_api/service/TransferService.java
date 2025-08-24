@@ -2,13 +2,14 @@ package com.marianarocigno.pix_transfer_api.service;
 
 import com.marianarocigno.pix_transfer_api.dto.TransferRequestDTO;
 import com.marianarocigno.pix_transfer_api.dto.TransferResponseDTO;
+import com.marianarocigno.pix_transfer_api.exception.BusinessException;
 import com.marianarocigno.pix_transfer_api.model.entities.AccountHolder;
 import com.marianarocigno.pix_transfer_api.model.entities.PixKey;
 import com.marianarocigno.pix_transfer_api.model.entities.Transfer;
 import com.marianarocigno.pix_transfer_api.repository.AccountHolderRepository;
 import com.marianarocigno.pix_transfer_api.repository.PixKeyRepository;
 import com.marianarocigno.pix_transfer_api.repository.TransferRepository;
-import jakarta.validation.ValidationException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Service
+@Transactional
 public class TransferService {
 
     @Autowired
@@ -37,14 +39,14 @@ public class TransferService {
     }
 
     public TransferResponseDTO transfer(TransferRequestDTO dto) {
-        PixKey senderPix = pixKeyRepository.findByKeyValue(dto.getSenderKey()).orElseThrow(() -> new ValidationException("Chave PIX do remetente não encontrada."));
-        PixKey receiverPix = pixKeyRepository.findByKeyValue(dto.getReceiverKey()).orElseThrow(() -> new ValidationException("Chave PIX do destinatário não encontrada."));
+        PixKey senderPix = pixKeyRepository.findByKeyValue(dto.getSenderKey()).orElseThrow(() -> new BusinessException("Chave PIX do remetente não encontrada."));
+        PixKey receiverPix = pixKeyRepository.findByKeyValue(dto.getReceiverKey()).orElseThrow(() -> new BusinessException("Chave PIX do destinatário não encontrada."));
 
         AccountHolder sender = senderPix.getAccountHolder();
         AccountHolder receiver = receiverPix.getAccountHolder();
 
         if (sender.getBalance().compareTo(dto.getAmount()) < 0) {
-            throw new ValidationException("Saldo insuficiente para realizar a transferência");
+            throw new BusinessException("Saldo insuficiente para realizar a transferência");
         }
 
         LocalDateTime startOfDay = LocalDateTime.now().with(LocalTime.MIN);
@@ -53,12 +55,11 @@ public class TransferService {
         if (totalToday == null) totalToday = BigDecimal.ZERO;
 
         if (totalToday.add(dto.getAmount()).compareTo(DAILY_LIMIT) > 0) {
-            throw new ValidationException("Limite diário de R$ 80.00 excedido.");
+            throw new BusinessException("Limite diário de R$ 80.00 excedido.");
         }
 
         sender.setBalance(sender.getBalance().subtract(dto.getAmount()));
         receiver.setBalance(receiver.getBalance().add(dto.getAmount()));
-
         accountHolderRepository.save(sender);
         accountHolderRepository.save(receiver);
 

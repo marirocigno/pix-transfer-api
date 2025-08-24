@@ -30,7 +30,15 @@ public class TransferController {
     }
 
     @GetMapping
-    public List<?> listAll() {
-        return repository.findAll();
+    public List<TransferResponseDTO> listAllDto() {
+        return repository.findAll().stream().map(t -> new TransferResponseDTO(
+                t.getId(),
+                t.getSender().getPixKeys().getFirst().getKeyValue(),
+                t.getReceiver().getPixKeys().getFirst().getKeyValue(),
+                t.getAmount(),
+                t.getCreatedAt(),
+                t.getSender().getBalance(),
+                t.getReceiver().getBalance()
+        )).toList();
     }
 }
