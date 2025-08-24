@@ -20,10 +20,4 @@ public interface TransferRepository extends JpaRepository<Transfer, Long> {
     BigDecimal sumTransfersForToday(@Param("senderId") Long senderId,
                                     @Param("startOfDay") LocalDateTime startOfDay,
                                     @Param("endOfDay") LocalDateTime endOfDay);
-
-    default BigDecimal sumTransfersForToday(Long senderId) {
-        LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
-        LocalDateTime endOfDay = LocalDate.now().atTime(LocalTime.MAX);
-        return sumTransfersForToday(senderId, startOfDay, endOfDay);
-    }
 }
