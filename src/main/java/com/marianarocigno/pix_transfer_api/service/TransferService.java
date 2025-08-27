@@ -39,8 +39,8 @@ public class TransferService {
     }
 
     public TransferResponseDTO transfer(TransferRequestDTO dto) {
-        PixKey senderPix = pixKeyRepository.findByKeyValue(dto.getSenderKey()).orElseThrow(() -> new BusinessException("Chave PIX do remetente não encontrada."));
-        PixKey receiverPix = pixKeyRepository.findByKeyValue(dto.getReceiverKey()).orElseThrow(() -> new BusinessException("Chave PIX do destinatário não encontrada."));
+        PixKey senderPix = pixKeyRepository.findByKeyValue(dto.getSenderKey()).orElseThrow(() -> new BusinessException("Chave Pix do remetente não encontrada."));
+        PixKey receiverPix = pixKeyRepository.findByKeyValue(dto.getReceiverKey()).orElseThrow(() -> new BusinessException("Chave Pix do destinatário não encontrada."));
 
         AccountHolder sender = senderPix.getAccountHolder();
         AccountHolder receiver = receiverPix.getAccountHolder();

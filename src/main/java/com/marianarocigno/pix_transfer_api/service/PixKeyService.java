@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 public class PixKeyService {
@@ -32,21 +33,31 @@ public class PixKeyService {
     public PixKeyResponseDTO create(PixKeyRequestDTO dto) {
         AccountHolder holder = accountHolderRepository.findById(dto.getAccountHolderId()).orElseThrow(() -> new ValidationException("Titular não encontrado."));
 
-        if (dto.getType() != PixKeyType.RANDOM && pixKeyRepository.findByKeyValue(dto.getKeyValue()).isPresent()) {
-            throw new BusinessException("Chave PIX já cadastrada.");
-        }
-
-        boolean hasSameType = pixKeyRepository.existsByAccountHolder_IdAndKeyType(holder.getId(), dto.getType());
-        if (hasSameType) {
-            throw new BusinessException("Titular já possui uma chave PIX do tipo.");
-        }
-
         String keyValue = dto.getKeyValue();
-        if (dto.getType() == PixKeyType.RANDOM)
+        if (dto.getType() == PixKeyType.RANDOM) {
             keyValue = PixKeyValidator.generateRandomKey();
-
-        if (dto.getType() != PixKeyType.RANDOM)
+        }
+        else {
+            keyValue = dto.getKeyValue();
             PixKeyValidator.isValid(keyValue, dto.getType());
+        }
+
+        List<PixKey> currentKeys = pixKeyRepository.findByAccountHolderId(holder.getId());
+        if (currentKeys.size() >= 5) {
+            throw new BusinessException("O cliente já atingiu o limite máximo de 5 chaves Pix.");
+        }
+
+        for (PixKey k : currentKeys) {
+            if (dto.getType() == PixKeyType.CPF && k.getKeyType() == PixKeyType.CPF) {
+                throw new BusinessException("Já existe uma chave CPF cadastrada.");
+            }
+            if (dto.getType() == PixKeyType.EMAIL && k.getKeyType() == PixKeyType.EMAIL) {
+                throw new BusinessException("Já existe uma chave de e-mail cadastrada.");
+            }
+            if (dto.getType() == PixKeyType.PHONE && k.getKeyType() == PixKeyType.PHONE) {
+                throw new BusinessException("Já existe uma chave de telefone cadastrada.");
+            }
+        }
 
         PixKey pixKey = new PixKey();
         pixKey.setKeyType(dto.getType());
