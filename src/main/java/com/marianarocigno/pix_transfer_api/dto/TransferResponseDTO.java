@@ -9,20 +9,16 @@ public class TransferResponseDTO {
     private String receiverKey;
     private BigDecimal amount;
     private LocalDateTime createdAt;
-    private BigDecimal senderBalanceAfter;
-    private BigDecimal receiverBalanceAfter;
 
     public TransferResponseDTO() {
     }
 
-    public TransferResponseDTO(Long id, String senderKey, String receiverKey, BigDecimal amount, LocalDateTime createdAt, BigDecimal senderBalanceAfter, BigDecimal receiverBalanceAfter) {
+    public TransferResponseDTO(Long id, String senderKey, String receiverKey, BigDecimal amount, LocalDateTime createdAt) {
         this.id = id;
         this.senderKey = senderKey;
         this.receiverKey = receiverKey;
         this.amount = amount;
         this.createdAt = createdAt;
-        this.senderBalanceAfter = senderBalanceAfter;
-        this.receiverBalanceAfter = receiverBalanceAfter;
     }
 
     public Long getId() {
@@ -65,19 +61,4 @@ public class TransferResponseDTO {
         this.createdAt = createdAt;
     }
 
-    public BigDecimal getSenderBalanceAfter() {
-        return senderBalanceAfter;
-    }
-
-    public void setSenderBalanceAfter(BigDecimal senderBalanceAfter) {
-        this.senderBalanceAfter = senderBalanceAfter;
-    }
-
-    public BigDecimal getReceiverBalanceAfter() {
-        return receiverBalanceAfter;
-    }
-
-    public void setReceiverBalanceAfter(BigDecimal receiverBalanceAfter) {
-        this.receiverBalanceAfter = receiverBalanceAfter;
-    }
 }

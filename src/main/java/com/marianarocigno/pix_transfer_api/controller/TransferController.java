@@ -36,9 +36,7 @@ public class TransferController {
                 t.getSender().getPixKeys().getFirst().getKeyValue(),
                 t.getReceiver().getPixKeys().getFirst().getKeyValue(),
                 t.getAmount(),
-                t.getCreatedAt(),
-                t.getSender().getBalance(),
-                t.getReceiver().getBalance()
+                t.getCreatedAt()
         )).toList();
     }
 }

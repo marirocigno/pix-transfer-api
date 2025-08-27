@@ -98,13 +98,4 @@ public class AccountHolder {
         this.pixKeys = pixKeys;
     }
 
-    public void addPixKey(PixKey key) {
-        pixKeys.add(key);
-        key.setAccountHolder(this);
-    }
-
-    public void removePixKey(PixKey key) {
-        pixKeys.remove(key);
-        key.setAccountHolder(null);
-    }
 }
