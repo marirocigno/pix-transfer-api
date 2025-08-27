@@ -27,7 +27,7 @@ public class AccountHolder {
 
     private BigDecimal balance = BigDecimal.ZERO;
 
-    //uma conta para muitas chaves pix
+    //uma conta para muitas chaves pix (5)
     @OneToMany(mappedBy = "accountHolder")
     private List <PixKey> pixKeys = new ArrayList<>();
 

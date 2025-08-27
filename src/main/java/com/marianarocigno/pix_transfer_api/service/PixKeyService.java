@@ -10,7 +10,6 @@ import com.marianarocigno.pix_transfer_api.repository.AccountHolderRepository;
 import com.marianarocigno.pix_transfer_api.repository.PixKeyRepository;
 import com.marianarocigno.pix_transfer_api.util.PixKeyValidator;
 import jakarta.validation.ValidationException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -19,10 +18,8 @@ import java.util.List;
 @Service
 public class PixKeyService {
 
-    @Autowired
     private final PixKeyRepository pixKeyRepository;
 
-    @Autowired
     private final AccountHolderRepository accountHolderRepository;
 
     public PixKeyService(PixKeyRepository pixKeyRepository, AccountHolderRepository accountHolderRepository) {
@@ -33,7 +30,7 @@ public class PixKeyService {
     public PixKeyResponseDTO create(PixKeyRequestDTO dto) {
         AccountHolder holder = accountHolderRepository.findById(dto.getAccountHolderId()).orElseThrow(() -> new ValidationException("Titular não encontrado."));
 
-        String keyValue = dto.getKeyValue();
+        String keyValue;
         if (dto.getType() == PixKeyType.RANDOM) {
             keyValue = PixKeyValidator.generateRandomKey();
         }
@@ -64,6 +61,7 @@ public class PixKeyService {
         pixKey.setKeyValue(keyValue);
         pixKey.setAccountHolder(holder);
 
+        // só vai cair nesse cenário se for a primeira chave pix
         long keysCount = pixKeyRepository.countByAccountHolderId(holder.getId());
         if (keysCount == 0 && holder.getBalance().signum() == 0) {
             holder.setBalance(BigDecimal.valueOf(100.00));
@@ -72,14 +70,40 @@ public class PixKeyService {
         pixKeyRepository.save(pixKey);
         accountHolderRepository.save(holder);
 
-         PixKeyResponseDTO response = new PixKeyResponseDTO();
-         response.setId(pixKey.getId());
-         response.setType(pixKey.getKeyType());
-         response.setKeyValue(pixKey.getKeyValue());
-         response.setAccountHolderId(holder.getId());
-         response.setAccountHolderName(holder.getName());
-         response.setAccountHolderBalance(holder.getBalance());
+        return mapToDTO(pixKey, holder);
 
-         return response;
+    }
+
+    // utilizei lambda, estou aprendendo...
+    public List<PixKeyResponseDTO> findAll() {
+        return pixKeyRepository.findAll().stream().map(key -> new PixKeyResponseDTO(
+                key.getId(),
+                key.getKeyType(),
+                key.getKeyValue(),
+                key.getAccountHolder().getId(),
+                key.getAccountHolder().getName(),
+                key.getAccountHolder().getBalance()
+        )).toList();
+    }
+
+    public PixKeyResponseDTO findById(Long id) {
+        PixKey pixKey = pixKeyRepository.findById(id).orElseThrow(() -> new BusinessException("Chave Pix não encontrada"));
+        return mapToDTO(pixKey, pixKey.getAccountHolder());
+    }
+
+    public void delete(Long id) {
+        PixKey pixKey = pixKeyRepository.findById(id).orElseThrow(() -> new BusinessException("Chave Pix não encontrada"));
+        pixKeyRepository.delete(pixKey);
+    }
+
+    private PixKeyResponseDTO mapToDTO(PixKey pixKey, AccountHolder holder) {
+        PixKeyResponseDTO response = new PixKeyResponseDTO();
+        response.setId(pixKey.getId());
+        response.setType(pixKey.getKeyType());
+        response.setKeyValue(pixKey.getKeyValue());
+        response.setAccountHolderId(holder.getId());
+        response.setAccountHolderName(holder.getName());
+        response.setAccountHolderBalance(holder.getBalance());
+        return response;
     }
 }

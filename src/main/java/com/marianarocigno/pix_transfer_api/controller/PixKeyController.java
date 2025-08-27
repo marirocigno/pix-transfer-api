@@ -1,12 +1,8 @@
 package com.marianarocigno.pix_transfer_api.controller;
 
-import com.marianarocigno.pix_transfer_api.dto.AccountHolderResponseDTO;
 import com.marianarocigno.pix_transfer_api.dto.PixKeyRequestDTO;
 import com.marianarocigno.pix_transfer_api.dto.PixKeyResponseDTO;
-import com.marianarocigno.pix_transfer_api.model.entities.PixKey;
-import com.marianarocigno.pix_transfer_api.repository.PixKeyRepository;
 import com.marianarocigno.pix_transfer_api.service.PixKeyService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,15 +11,10 @@ import java.util.List;
 @RequestMapping("/pix-keys")
 public class PixKeyController {
 
-    @Autowired
     private final PixKeyService service;
 
-    @Autowired
-    private final PixKeyRepository repository;
-
-    public PixKeyController(PixKeyService service, PixKeyRepository repository) {
+    public PixKeyController(PixKeyService service) {
         this.service = service;
-        this.repository = repository;
     }
 
     @PostMapping
@@ -32,15 +23,18 @@ public class PixKeyController {
     }
 
     @GetMapping
-    public List<PixKeyResponseDTO> listAllDto() {
-        return repository.findAll().stream().map(key -> new PixKeyResponseDTO(
-                key.getId(),
-                key.getKeyType(),
-                key.getKeyValue(),
-                key.getAccountHolder().getId(),
-                key.getAccountHolder().getName(),
-                key.getAccountHolder().getBalance()
-        )).toList();
+    public List<PixKeyResponseDTO> listAll() {
+        return service.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public PixKeyResponseDTO findById(@PathVariable Long id) {
+        return service.findById(id);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        service.delete(id);
     }
 }
 

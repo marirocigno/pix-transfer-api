@@ -17,6 +17,7 @@ public class PixKey {
     @Column(nullable = false)
     private PixKeyType keyType;
 
+    //muitas chaves pix (5) para uma conta
     @ManyToOne
     @JoinColumn(name = "account_holder_id")
     private AccountHolder accountHolder;

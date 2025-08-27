@@ -10,7 +10,6 @@ import com.marianarocigno.pix_transfer_api.repository.AccountHolderRepository;
 import com.marianarocigno.pix_transfer_api.repository.PixKeyRepository;
 import com.marianarocigno.pix_transfer_api.repository.TransferRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -21,13 +20,10 @@ import java.time.LocalTime;
 @Transactional
 public class TransferService {
 
-    @Autowired
     private final PixKeyRepository pixKeyRepository;
 
-    @Autowired
     private final AccountHolderRepository accountHolderRepository;
 
-    @Autowired
     private final TransferRepository transferRepository;
 
     private static final BigDecimal DAILY_LIMIT = new BigDecimal("80.00");
@@ -42,9 +38,11 @@ public class TransferService {
         PixKey senderPix = pixKeyRepository.findByKeyValue(dto.getSenderKey()).orElseThrow(() -> new BusinessException("Chave Pix do remetente não encontrada."));
         PixKey receiverPix = pixKeyRepository.findByKeyValue(dto.getReceiverKey()).orElseThrow(() -> new BusinessException("Chave Pix do destinatário não encontrada."));
 
+        //confirmar
         AccountHolder sender = senderPix.getAccountHolder();
         AccountHolder receiver = receiverPix.getAccountHolder();
 
+        //subtrai o valor da quantidade no saldo e se o resultado for negativo, quer dizer que ele não possui saldo para fazer a transferência
         if (sender.getBalance().compareTo(dto.getAmount()) < 0) {
             throw new BusinessException("Saldo insuficiente para realizar a transferência");
         }
@@ -52,7 +50,6 @@ public class TransferService {
         LocalDateTime startOfDay = LocalDateTime.now().with(LocalTime.MIN);
         LocalDateTime endOfDay = LocalDateTime.now().with(LocalTime.MAX);
         BigDecimal totalToday = transferRepository.sumTransfersForToday(sender.getId(), startOfDay, endOfDay);
-        if (totalToday == null) totalToday = BigDecimal.ZERO;
 
         if (totalToday.add(dto.getAmount()).compareTo(DAILY_LIMIT) > 0) {
             throw new BusinessException("Limite diário de R$ 80.00 excedido.");

@@ -4,16 +4,14 @@ import com.marianarocigno.pix_transfer_api.dto.AccountHolderRequestDTO;
 import com.marianarocigno.pix_transfer_api.dto.AccountHolderResponseDTO;
 import com.marianarocigno.pix_transfer_api.exception.BusinessException;
 import com.marianarocigno.pix_transfer_api.model.entities.AccountHolder;
-import com.marianarocigno.pix_transfer_api.model.enums.PixKeyType;
 import com.marianarocigno.pix_transfer_api.repository.AccountHolderRepository;
-import com.marianarocigno.pix_transfer_api.util.PixKeyValidator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class AccountHolderService {
 
-    @Autowired
     private final AccountHolderRepository repository;
 
     public AccountHolderService(AccountHolderRepository repository) {
@@ -25,27 +23,70 @@ public class AccountHolderService {
             throw new BusinessException("CPF já cadastrado.");
         }
 
-        PixKeyValidator.isValid(dto.getCpf(), PixKeyType.CPF);
-        PixKeyValidator.isValid(dto.getEmail(), PixKeyType.EMAIL);
-        PixKeyValidator.isValid(dto.getPhone(), PixKeyType.PHONE);
-
         AccountHolder holder = new AccountHolder();
         holder.setCpf(dto.getCpf());
         holder.setName(dto.getName());
         holder.setEmail(dto.getEmail());
         holder.setPhone(dto.getPhone());
 
-        AccountHolder saved = repository.save(holder);
+        repository.save(holder);
 
-        AccountHolderResponseDTO response = new AccountHolderResponseDTO();
-        response.setId(saved.getId());
-        response.setCpf(saved.getCpf());
-        response.setName(saved.getName());
-        response.setEmail(saved.getEmail());
-        response.setPhone(saved.getPhone());
-        response.setBalance(saved.getBalance());
+        return new AccountHolderResponseDTO(
+                holder.getId(),
+                holder.getCpf(),
+                holder.getName(),
+                holder.getEmail(),
+                holder.getPhone(),
+                holder.getBalance()
+        );
 
-        return response;
+    }
 
+    public List<AccountHolderResponseDTO> findAll () {
+        // reforçar lambda
+        return repository.findAll().stream().map(holder -> new AccountHolderResponseDTO(
+                holder.getId(),
+                holder.getCpf(),
+                holder.getName(),
+                holder.getEmail(),
+                holder.getPhone(),
+                holder.getBalance()
+
+        )).toList();
+    }
+
+    public AccountHolderResponseDTO findById(Long id) {
+        AccountHolder holder = repository.findById(id).orElseThrow(() -> new BusinessException("Titular não encontrado."));
+        return new AccountHolderResponseDTO(
+                holder.getId(),
+                holder.getCpf(),
+                holder.getName(),
+                holder.getEmail(),
+                holder.getPhone(),
+                holder.getBalance()
+        );
+    }
+
+    public AccountHolderResponseDTO update(Long id, AccountHolderRequestDTO dto) {
+        AccountHolder holder = repository.findById(id).orElseThrow(() -> new BusinessException("Titular não encontrado."));
+        holder.setName(dto.getName());
+        holder.setEmail(dto.getEmail());
+        holder.setPhone(dto.getPhone());
+
+        repository.save(holder);
+
+        return new AccountHolderResponseDTO(
+                holder.getId(),
+                holder.getCpf(),
+                holder.getName(),
+                holder.getEmail(),
+                holder.getPhone(),
+                holder.getBalance()
+        );
+
+    }
+    public void delete(Long id) {
+        AccountHolder holder = repository.findById(id).orElseThrow(() -> new BusinessException("Titular não encontrado."));
+        repository.delete(holder);
     }
 }

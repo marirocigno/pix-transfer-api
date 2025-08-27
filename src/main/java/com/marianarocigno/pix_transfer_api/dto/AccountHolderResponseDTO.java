@@ -1,7 +1,6 @@
 package com.marianarocigno.pix_transfer_api.dto;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 public class AccountHolderResponseDTO {
 
