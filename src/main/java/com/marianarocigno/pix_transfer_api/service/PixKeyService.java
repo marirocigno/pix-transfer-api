@@ -70,25 +70,18 @@ public class PixKeyService {
         pixKeyRepository.save(pixKey);
         accountHolderRepository.save(holder);
 
-        return mapToDTO(pixKey, holder);
+        return mapToDTO(pixKey);
 
     }
 
     // utilizei lambda, estou aprendendo...
     public List<PixKeyResponseDTO> findAll() {
-        return pixKeyRepository.findAll().stream().map(key -> new PixKeyResponseDTO(
-                key.getId(),
-                key.getKeyType(),
-                key.getKeyValue(),
-                key.getAccountHolder().getId(),
-                key.getAccountHolder().getName(),
-                key.getAccountHolder().getBalance()
-        )).toList();
+        return pixKeyRepository.findAll().stream().map(this::mapToDTO).toList();
     }
 
     public PixKeyResponseDTO findById(Long id) {
         PixKey pixKey = pixKeyRepository.findById(id).orElseThrow(() -> new BusinessException("Chave Pix não encontrada"));
-        return mapToDTO(pixKey, pixKey.getAccountHolder());
+        return mapToDTO(pixKey);
     }
 
     public void delete(Long id) {
@@ -96,14 +89,15 @@ public class PixKeyService {
         pixKeyRepository.delete(pixKey);
     }
 
-    private PixKeyResponseDTO mapToDTO(PixKey pixKey, AccountHolder holder) {
-        PixKeyResponseDTO response = new PixKeyResponseDTO();
-        response.setId(pixKey.getId());
-        response.setType(pixKey.getKeyType());
-        response.setKeyValue(pixKey.getKeyValue());
-        response.setAccountHolderId(holder.getId());
-        response.setAccountHolderName(holder.getName());
-        response.setAccountHolderBalance(holder.getBalance());
-        return response;
+    private PixKeyResponseDTO mapToDTO(PixKey pixKey) {
+        AccountHolder holder = pixKey.getAccountHolder();
+        return new PixKeyResponseDTO(
+                pixKey.getId(),
+                pixKey.getKeyType(),
+                pixKey.getKeyValue(),
+                holder.getId(),
+                holder.getName(),
+                holder.getBalance()
+        );
     }
 }

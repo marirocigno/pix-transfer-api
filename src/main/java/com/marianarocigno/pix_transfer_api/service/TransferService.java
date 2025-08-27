@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 @Service
 @Transactional
@@ -68,13 +69,25 @@ public class TransferService {
 
         Transfer saved = transferRepository.save(transfer);
 
-        TransferResponseDTO response = new TransferResponseDTO();
-        response.setId(saved.getId());
-        response.setSenderKey(senderPix.getKeyValue());
-        response.setReceiverKey(receiverPix.getKeyValue());
-        response.setAmount(saved.getAmount());
-        response.setCreatedAt(saved.getCreatedAt());
+        return mapToDTO(saved, senderPix, receiverPix);
+    }
 
-        return response;
+    public List<TransferResponseDTO> findAll() {
+        return transferRepository.findAll().stream().map(t -> mapToDTO(t, t.getSender().getPixKeys().getFirst(), t.getReceiver().getPixKeys().getFirst())).toList();
+    }
+
+    public TransferResponseDTO findById(Long id) {
+        Transfer transfer = transferRepository.findById(id).orElseThrow(() -> new BusinessException("Transferência não encontrada"));
+        return mapToDTO(transfer, transfer.getSender().getPixKeys().getFirst(), transfer.getReceiver().getPixKeys().getFirst());
+    }
+
+    private TransferResponseDTO mapToDTO(Transfer transfer, PixKey senderPix, PixKey receiverPix) {
+        return new TransferResponseDTO(
+                transfer.getId(),
+                senderPix.getKeyValue(),
+                receiverPix.getKeyValue(),
+                transfer.getAmount(),
+                transfer.getCreatedAt()
+        );
     }
 }

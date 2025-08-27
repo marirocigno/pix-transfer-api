@@ -31,40 +31,18 @@ public class AccountHolderService {
 
         repository.save(holder);
 
-        return new AccountHolderResponseDTO(
-                holder.getId(),
-                holder.getCpf(),
-                holder.getName(),
-                holder.getEmail(),
-                holder.getPhone(),
-                holder.getBalance()
-        );
+        return mapToDTO(holder);
 
     }
 
     public List<AccountHolderResponseDTO> findAll () {
         // reforçar lambda
-        return repository.findAll().stream().map(holder -> new AccountHolderResponseDTO(
-                holder.getId(),
-                holder.getCpf(),
-                holder.getName(),
-                holder.getEmail(),
-                holder.getPhone(),
-                holder.getBalance()
-
-        )).toList();
+        return repository.findAll().stream().map(this::mapToDTO).toList();
     }
 
     public AccountHolderResponseDTO findById(Long id) {
         AccountHolder holder = repository.findById(id).orElseThrow(() -> new BusinessException("Titular não encontrado."));
-        return new AccountHolderResponseDTO(
-                holder.getId(),
-                holder.getCpf(),
-                holder.getName(),
-                holder.getEmail(),
-                holder.getPhone(),
-                holder.getBalance()
-        );
+        return mapToDTO(holder);
     }
 
     public AccountHolderResponseDTO update(Long id, AccountHolderRequestDTO dto) {
@@ -75,6 +53,15 @@ public class AccountHolderService {
 
         repository.save(holder);
 
+        return mapToDTO(holder);
+    }
+
+    public void delete(Long id) {
+        AccountHolder holder = repository.findById(id).orElseThrow(() -> new BusinessException("Titular não encontrado."));
+        repository.delete(holder);
+    }
+
+    private AccountHolderResponseDTO mapToDTO(AccountHolder holder) {
         return new AccountHolderResponseDTO(
                 holder.getId(),
                 holder.getCpf(),
@@ -83,10 +70,5 @@ public class AccountHolderService {
                 holder.getPhone(),
                 holder.getBalance()
         );
-
-    }
-    public void delete(Long id) {
-        AccountHolder holder = repository.findById(id).orElseThrow(() -> new BusinessException("Titular não encontrado."));
-        repository.delete(holder);
     }
 }
