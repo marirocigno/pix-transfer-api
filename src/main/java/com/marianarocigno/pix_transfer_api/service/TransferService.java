@@ -77,8 +77,6 @@ public class TransferService {
         response.setReceiverKey(receiverPix.getKeyValue());
         response.setAmount(saved.getAmount());
         response.setCreatedAt(saved.getCreatedAt());
-        response.setSenderBalanceAfter(sender.getBalance());
-        response.setReceiverBalanceAfter(receiver.getBalance());
 
         return response;
     }
