@@ -12,11 +12,21 @@ public class Transfer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // Muias transferências podem ter o mesmo remetente.
     @ManyToOne
     private AccountHolder sender;
 
+    // Muias transferências podem ter o mesmo destinatário.
     @ManyToOne
     private AccountHolder receiver;
+
+    // Muitas transferências podem ser feitas com a mesma chave pix do remetente.
+    @ManyToOne
+    private PixKey senderPix;
+
+    // Muitas transferências podem ser feitas com a mesma chave pix do destinatário.
+    @ManyToOne
+    private PixKey receiverPix;
 
     @Column(nullable = false)
     private BigDecimal amount;
@@ -72,5 +82,21 @@ public class Transfer {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public PixKey getSenderPix() {
+        return senderPix;
+    }
+
+    public void setSenderPix(PixKey senderPix) {
+        this.senderPix = senderPix;
+    }
+
+    public PixKey getReceiverPix() {
+        return receiverPix;
+    }
+
+    public void setReceiverPix(PixKey receiverPix) {
+        this.receiverPix = receiverPix;
     }
 }

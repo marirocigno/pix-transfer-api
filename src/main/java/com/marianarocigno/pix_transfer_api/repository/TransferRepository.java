@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 public interface TransferRepository extends JpaRepository<Transfer, Long> {
 
-
+    // A query faz a soma de todas as transferências do dia diretamente no banco de dados.
     @Query("SELECT COALESCE(SUM(t.amount), 0) " +
             "FROM Transfer t " +
             "WHERE t.sender.id = :senderId " +

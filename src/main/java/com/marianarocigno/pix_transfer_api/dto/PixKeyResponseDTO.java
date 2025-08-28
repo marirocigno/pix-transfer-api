@@ -24,12 +24,6 @@ public class PixKeyResponseDTO {
         this.accountHolderBalance = accountHolderBalance;
     }
 
-    public PixKeyResponseDTO(Long id, String keyValue, PixKeyType type) {
-        this.id = id;
-        this.keyValue = keyValue;
-        this.type = type;
-    }
-
     public Long getId() {
         return id;
     }

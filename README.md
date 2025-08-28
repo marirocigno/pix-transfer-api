@@ -6,7 +6,7 @@ API REST em Java/Spring Boot para gerenciamento de contas, chaves Pix e transfer
 
 ## Tecnologias Utilizadas
 
-- Java 17
+- Java 21
 - Spring Boot
 - Spring Data JPA
 - H2 Database

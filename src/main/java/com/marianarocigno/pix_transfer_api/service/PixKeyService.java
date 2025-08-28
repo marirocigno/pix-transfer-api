@@ -9,7 +9,6 @@ import com.marianarocigno.pix_transfer_api.model.enums.PixKeyType;
 import com.marianarocigno.pix_transfer_api.repository.AccountHolderRepository;
 import com.marianarocigno.pix_transfer_api.repository.PixKeyRepository;
 import com.marianarocigno.pix_transfer_api.util.PixKeyValidator;
-import jakarta.validation.ValidationException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -29,7 +28,7 @@ public class PixKeyService {
     }
 
     public PixKeyResponseDTO create(PixKeyRequestDTO dto) {
-        AccountHolder holder = accountHolderRepository.findById(dto.getAccountHolderId()).orElseThrow(() -> new ValidationException("Titular não encontrado."));
+        AccountHolder holder = accountHolderRepository.findById(dto.getAccountHolderId()).orElseThrow(() -> new BusinessException("Titular não encontrado."));
 
         String keyValue;
         if (dto.getType() == PixKeyType.RANDOM) {
@@ -40,11 +39,13 @@ public class PixKeyService {
             PixKeyValidator.isValid(keyValue, dto.getType());
         }
 
+        //aqui validamos a quantidade de chave pix que o titular possui
         List<PixKey> currentKeys = pixKeyRepository.findByAccountHolderId(holder.getId());
         if (currentKeys.size() >= 5) {
             throw new BusinessException("O cliente já atingiu o limite máximo de 5 chaves Pix.");
         }
 
+        //aqui buscamos no banco se o cliente já possui as chaves do tipo CPF, EMAIL ou PHONE, se sim, ele não poderá criar outra chave do mesmo tipo, apenas alearória.
         for (PixKey k : currentKeys) {
             if (dto.getType() == PixKeyType.CPF && k.getKeyType() == PixKeyType.CPF) {
                 throw new BusinessException("Já existe uma chave CPF cadastrada.");

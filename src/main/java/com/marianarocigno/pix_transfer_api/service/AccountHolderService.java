@@ -66,6 +66,7 @@ public class AccountHolderService {
         repository.delete(holder);
     }
 
+    //converte a entidade para DTO e centraliza a informação sem precisar repetir o código muitas vezes
     private AccountHolderResponseDTO mapToDTO(AccountHolder holder) {
         return new AccountHolderResponseDTO(
                 holder.getId(),

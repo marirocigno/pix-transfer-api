@@ -65,21 +65,21 @@ public class TransferService {
         Transfer transfer = new Transfer();
         transfer.setSender(sender);
         transfer.setReceiver(receiver);
+        transfer.setSenderPix(senderPix);
+        transfer.setReceiverPix(receiverPix);
         transfer.setAmount(dto.getAmount());
         transfer.setCreatedAt(LocalDateTime.now());
 
         Transfer saved = transferRepository.save(transfer);
 
-        return mapToDTO(saved, senderPix, receiverPix);
+        return mapToDTO(saved);
     }
 
     public List<TransferResponseDTO> findAll() {
         List<Transfer> transfers = transferRepository.findAll();
         List<TransferResponseDTO> dtos = new ArrayList<>();
         for (Transfer t : transfers) {
-            PixKey senderPix = t.getSender().getPixKeys().getFirst();
-            PixKey receiverPix = t.getSender().getPixKeys().getFirst();
-            dtos.add(mapToDTO(t, senderPix, receiverPix));
+            dtos.add(mapToDTO(t));
 
         }
         return dtos;
@@ -87,16 +87,15 @@ public class TransferService {
 
     public TransferResponseDTO findById(Long id) {
         Transfer transfer = transferRepository.findById(id).orElseThrow(() -> new BusinessException("Transferência não encontrada"));
-        PixKey senderPix = transfer.getSender().getPixKeys().getFirst();
-        PixKey receiverPix = transfer.getSender().getPixKeys().getFirst();
-        return mapToDTO(transfer, senderPix, receiverPix);
+
+        return mapToDTO(transfer);
     }
 
-    private TransferResponseDTO mapToDTO(Transfer transfer, PixKey senderPix, PixKey receiverPix) {
+    private TransferResponseDTO mapToDTO(Transfer transfer) {
         TransferResponseDTO dto = new TransferResponseDTO();
         dto.setId( transfer.getId());
-        dto.setSenderKey(senderPix.getKeyValue());
-        dto.setReceiverKey(receiverPix.getKeyValue());
+        dto.setSenderKey(transfer.getSenderPix().getKeyValue());
+        dto.setReceiverKey(transfer.getReceiverPix().getKeyValue());
         dto.setAmount(transfer.getAmount());
         DateTimeFormatter formartter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
         dto.setCreatedAt(transfer.getCreatedAt().format(formartter));
