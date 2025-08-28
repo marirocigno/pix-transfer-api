@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -39,7 +41,6 @@ public class TransferService {
         PixKey senderPix = pixKeyRepository.findByKeyValue(dto.getSenderKey()).orElseThrow(() -> new BusinessException("Chave Pix do remetente não encontrada."));
         PixKey receiverPix = pixKeyRepository.findByKeyValue(dto.getReceiverKey()).orElseThrow(() -> new BusinessException("Chave Pix do destinatário não encontrada."));
 
-        //confirmar
         AccountHolder sender = senderPix.getAccountHolder();
         AccountHolder receiver = receiverPix.getAccountHolder();
 
@@ -73,21 +74,33 @@ public class TransferService {
     }
 
     public List<TransferResponseDTO> findAll() {
-        return transferRepository.findAll().stream().map(t -> mapToDTO(t, t.getSender().getPixKeys().getFirst(), t.getReceiver().getPixKeys().getFirst())).toList();
+        List<Transfer> transfers = transferRepository.findAll();
+        List<TransferResponseDTO> dtos = new ArrayList<>();
+        for (Transfer t : transfers) {
+            PixKey senderPix = t.getSender().getPixKeys().getFirst();
+            PixKey receiverPix = t.getSender().getPixKeys().getFirst();
+            dtos.add(mapToDTO(t, senderPix, receiverPix));
+
+        }
+        return dtos;
     }
 
     public TransferResponseDTO findById(Long id) {
         Transfer transfer = transferRepository.findById(id).orElseThrow(() -> new BusinessException("Transferência não encontrada"));
-        return mapToDTO(transfer, transfer.getSender().getPixKeys().getFirst(), transfer.getReceiver().getPixKeys().getFirst());
+        PixKey senderPix = transfer.getSender().getPixKeys().getFirst();
+        PixKey receiverPix = transfer.getSender().getPixKeys().getFirst();
+        return mapToDTO(transfer, senderPix, receiverPix);
     }
 
     private TransferResponseDTO mapToDTO(Transfer transfer, PixKey senderPix, PixKey receiverPix) {
-        return new TransferResponseDTO(
-                transfer.getId(),
-                senderPix.getKeyValue(),
-                receiverPix.getKeyValue(),
-                transfer.getAmount(),
-                transfer.getCreatedAt()
-        );
+        TransferResponseDTO dto = new TransferResponseDTO();
+        dto.setId( transfer.getId());
+        dto.setSenderKey(senderPix.getKeyValue());
+        dto.setReceiverKey(receiverPix.getKeyValue());
+        dto.setAmount(transfer.getAmount());
+        DateTimeFormatter formartter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        dto.setCreatedAt(transfer.getCreatedAt().format(formartter));
+
+        return dto;
     }
 }

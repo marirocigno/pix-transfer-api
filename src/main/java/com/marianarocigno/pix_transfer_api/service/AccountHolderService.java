@@ -7,6 +7,7 @@ import com.marianarocigno.pix_transfer_api.model.entities.AccountHolder;
 import com.marianarocigno.pix_transfer_api.repository.AccountHolderRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -36,8 +37,12 @@ public class AccountHolderService {
     }
 
     public List<AccountHolderResponseDTO> findAll () {
-        // reforçar lambda
-        return repository.findAll().stream().map(this::mapToDTO).toList();
+        List<AccountHolder> holders = repository.findAll();
+        List<AccountHolderResponseDTO> dtos = new ArrayList<>();
+        for (AccountHolder h : holders) {
+            dtos.add(mapToDTO(h));
+        }
+        return dtos;
     }
 
     public AccountHolderResponseDTO findById(Long id) {

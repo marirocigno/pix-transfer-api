@@ -1,19 +1,18 @@
 package com.marianarocigno.pix_transfer_api.dto;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 public class TransferResponseDTO {
     private Long id;
     private String senderKey;
     private String receiverKey;
     private BigDecimal amount;
-    private LocalDateTime createdAt;
+    private String createdAt;
 
     public TransferResponseDTO() {
     }
 
-    public TransferResponseDTO(Long id, String senderKey, String receiverKey, BigDecimal amount, LocalDateTime createdAt) {
+    public TransferResponseDTO(Long id, String senderKey, String receiverKey, BigDecimal amount, String createdAt) {
         this.id = id;
         this.senderKey = senderKey;
         this.receiverKey = receiverKey;
@@ -53,11 +52,11 @@ public class TransferResponseDTO {
         this.amount = amount;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public String getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
     }
 

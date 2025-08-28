@@ -13,6 +13,7 @@ import jakarta.validation.ValidationException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -74,9 +75,13 @@ public class PixKeyService {
 
     }
 
-    // utilizei lambda, estou aprendendo...
     public List<PixKeyResponseDTO> findAll() {
-        return pixKeyRepository.findAll().stream().map(this::mapToDTO).toList();
+        List<PixKey> pixKeys = pixKeyRepository.findAll();
+        List<PixKeyResponseDTO> dtos = new ArrayList<>();
+        for (PixKey p : pixKeys) {
+            dtos.add(mapToDTO(p));
+        }
+        return dtos;
     }
 
     public PixKeyResponseDTO findById(Long id) {
