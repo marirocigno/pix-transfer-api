@@ -44,7 +44,7 @@ public class TransferService {
         AccountHolder sender = senderPix.getAccountHolder();
         AccountHolder receiver = receiverPix.getAccountHolder();
 
-        //subtrai o valor da quantidade no saldo e se o resultado for negativo, quer dizer que ele não possui saldo para fazer a transferência
+        // metodo compareTo -1 (a < b), 0 (a == b), 1 (b > a)
         if (sender.getBalance().compareTo(dto.getAmount()) < 0) {
             throw new BusinessException("Saldo insuficiente para realizar a transferência");
         }
@@ -53,6 +53,7 @@ public class TransferService {
         LocalDateTime endOfDay = LocalDateTime.now().with(LocalTime.MAX);
         BigDecimal totalToday = transferRepository.sumTransfersForToday(sender.getId(), startOfDay, endOfDay);
 
+        // metodo compareTo -1 (a < b), 0 (a == b), 1 (b > a)
         if (totalToday.add(dto.getAmount()).compareTo(DAILY_LIMIT) > 0) {
             throw new BusinessException("Limite diário de R$ 80.00 excedido.");
         }
